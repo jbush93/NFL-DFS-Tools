@@ -182,7 +182,8 @@ class NFL_Optimizer:
                     else:
                         stddev = float(row["stddev"])
                 else:
-                    stddev = float(stddev)
+                    # stddev = float(stddev)
+                    stddev = 0
                     if position == "QB":
                         stddev = fpts * self.default_qb_var
                     elif position == "DST":
@@ -196,7 +197,7 @@ class NFL_Optimizer:
                         ceil = float(row["ceiling"])
                 else:
                     ceil = fpts + stddev
-                own = float(row["own%"].replace("%", ""))
+                own = float(row.get("Own%", "0").replace("%", ""))
                 if own == 0:
                     own = 0.1
                 if (
@@ -229,9 +230,11 @@ class NFL_Optimizer:
                         "DST": [],
                     }
 
-                self.players_by_team[team][position].append(
+                if position != "K":
+                  self.players_by_team[team][position].append(
                     self.player_dict[(player_name, position, team)]
-                )
+                  )
+
 
     def optimize(self):
         # Setup our linear programming equation - https://en.wikipedia.org/wiki/Linear_programming
